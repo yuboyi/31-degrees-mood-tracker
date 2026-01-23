@@ -1,0 +1,122 @@
+<!--pages/gallery/index.wxml-->
+<view class="container">
+  <!-- 顶部搜索栏 -->
+  <view class="header">
+    <view class="search-bar">
+      <image class="search-icon" src="/images/search-icon.png" />
+      <input class="search-input" placeholder="搜索作品..." bind:input="onSearchInput" bind:confirm="onSearchConfirm" />
+    </view>
+    <view class="filter-btn" bind:tap="showFilterModal">
+      <image class="filter-icon" src="/images/filter-icon.png" />
+    </view>
+  </view>
+
+  <!-- 筛选标签 -->
+  <scroll-view class="filter-tags" scroll-x="true" wx:if="{{filterTags.length > 0}}">
+    <view class="tags-list">
+      <view class="tag-item {{item.active ? 'active' : ''}}" wx:for="{{filterTags}}" wx:key="key" bind:tap="toggleFilter" data-key="{{item.key}}">
+        <text class="tag-text">{{item.name}}</text>
+      </view>
+    </view>
+  </scroll-view>
+
+  <!-- 作品网格 -->
+  <view class="gallery-grid" wx:if="{{artworks.length > 0}}">
+    <view class="artwork-item" wx:for="{{artworks}}" wx:key="id" bind:tap="previewArtwork" data-index="{{index}}">
+      <image class="artwork-image" src="{{item.imageUrl}}" mode="aspectFill" lazy-load />
+      <view class="artwork-overlay">
+        <view class="artwork-info">
+          <text class="artwork-prompt">{{item.prompt}}</text>
+          <text class="artwork-time">{{item.createTime}}</text>
+        </view>
+        <view class="artwork-actions">
+          <view class="action-btn" bind:tap="downloadArtwork" data-item="{{item}}" catchtap="true">
+            <image class="action-icon" src="/images/download-icon.png" />
+          </view>
+          <view class="action-btn" bind:tap="shareArtwork" data-item="{{item}}" catchtap="true">
+            <image class="action-icon" src="/images/share-icon.png" />
+          </view>
+          <view class="action-btn" bind:tap="deleteArtwork" data-item="{{item}}" catchtap="true">
+            <image class="action-icon" src="/images/delete-icon.png" />
+          </view>
+        </view>
+      </view>
+      <view class="artwork-type">
+        <text class="type-text">{{item.typeText}}</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <image class="empty-icon" src="/images/empty-gallery.png" />
+    <text class="empty-title">还没有作品</text>
+    <text class="empty-desc">快去创作您的第一个AI作品吧！</text>
+    <button class="create-btn" bind:tap="navigateToCreate">开始创作</button>
+  </view>
+
+  <!-- 加载更多 -->
+  <view class="load-more" wx:if="{{hasMore && artworks.length > 0}}">
+    <view class="load-more-btn" bind:tap="loadMoreArtworks">
+      <text wx:if="{{!loadingMore}}">加载更多</text>
+      <view wx:else class="loading-spinner">
+        <image class="spinner-icon spin" src="/images/loading.png" />
+        <text>加载中...</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 筛选弹窗 -->
+<view class="filter-modal" wx:if="{{showFilter}}">
+  <view class="modal-overlay" bind:tap="hideFilterModal"></view>
+  <view class="modal-content">
+    <view class="modal-header">
+      <text class="modal-title">筛选作品</text>
+      <text class="modal-close" bind:tap="hideFilterModal">×</text>
+    </view>
+    <view class="modal-body">
+      <!-- 作品类型 -->
+      <view class="filter-group">
+        <text class="filter-label">作品类型</text>
+        <view class="filter-options">
+          <view class="filter-option {{filterData.type === item.key ? 'active' : ''}}" wx:for="{{typeOptions}}" wx:key="key" bind:tap="selectFilterType" data-key="{{item.key}}">
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 创作风格 -->
+      <view class="filter-group">
+        <text class="filter-label">创作风格</text>
+        <view class="filter-options">
+          <view class="filter-option {{filterData.style === item.key ? 'active' : ''}}" wx:for="{{styleOptions}}" wx:key="key" bind:tap="selectFilterStyle" data-key="{{item.key}}">
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+      
+      <!-- 时间范围 -->
+      <view class="filter-group">
+        <text class="filter-label">时间范围</text>
+        <view class="filter-options">
+          <view class="filter-option {{filterData.timeRange === item.key ? 'active' : ''}}" wx:for="{{timeRangeOptions}}" wx:key="key" bind:tap="selectFilterTimeRange" data-key="{{item.key}}">
+            <text>{{item.name}}</text>
+          </view>
+        </view>
+      </view>
+    </view>
+    <view class="modal-footer">
+      <button class="reset-btn" bind:tap="resetFilter">重置</button>
+      <button class="apply-btn" bind:tap="applyFilter">应用筛选</button>
+    </view>
+  </view>
+</view>
+
+<!-- 加载中 -->
+<view class="loading-overlay" wx:if="{{loading}}">
+  <view class="loading-content">
+    <image class="loading-icon spin" src="/images/loading.png" />
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

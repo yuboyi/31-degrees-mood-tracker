@@ -1,0 +1,138 @@
+<!--pages/index/index.wxml-->
+<view class="container">
+  <!-- 头部区域 -->
+  <view class="header">
+    <view class="welcome-section">
+      <text class="welcome-title">31度文创精灵</text>
+      <text class="welcome-subtitle">AI赋能无限创意</text>
+    </view>
+    
+    <!-- 用户信息区域 -->
+    <view class="user-section" wx:if="{{userInfo}}">
+      <image class="avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" />
+      <view class="user-info">
+        <text class="username">{{userInfo.nickname || '用户'}}</text>
+        <text class="user-stats">今日剩余: {{remainingRequests}}次</text>
+      </view>
+    </view>
+    
+    <!-- 未登录状态 -->
+    <view class="login-section" wx:else>
+      <button class="login-btn" bind:tap="handleLogin">
+        <image class="login-icon" src="/images/wechat-icon.png" />
+        <text>微信登录</text>
+      </button>
+    </view>
+  </view>
+
+  <!-- 功能卡片区域 -->
+  <view class="features-section">
+    <view class="section-title">
+      <text class="title-text">AI创作功能</text>
+      <text class="title-desc">选择您需要的创作类型</text>
+    </view>
+
+    <view class="features-grid">
+      <!-- 文生图 -->
+      <view class="feature-card" bind:tap="navigateToTextToImage">
+        <view class="card-icon text-to-image">
+          <image src="/images/text-to-image-icon.png" />
+        </view>
+        <view class="card-content">
+          <text class="card-title">文生图</text>
+          <text class="card-desc">输入文字描述，AI生成精美图片</text>
+        </view>
+        <view class="card-badge">热门</view>
+      </view>
+
+      <!-- 图生图 -->
+      <view class="feature-card" bind:tap="navigateToImageToImage">
+        <view class="card-icon image-to-image">
+          <image src="/images/image-to-image-icon.png" />
+        </view>
+        <view class="card-content">
+          <text class="card-title">图生图</text>
+          <text class="card-desc">基于现有图片重新创作</text>
+        </view>
+      </view>
+
+      <!-- 图转2.5D -->
+      <view class="feature-card" bind:tap="navigateToImageTo25D">
+        <view class="card-icon image-to-25d">
+          <image src="/images/image-to-25d-icon.png" />
+        </view>
+        <view class="card-content">
+          <text class="card-title">图转2.5D</text>
+          <text class="card-desc">平面图片转立体效果</text>
+        </view>
+        <view class="card-badge new">新功能</view>
+      </view>
+
+      <!-- 图转3D -->
+      <view class="feature-card" bind:tap="navigateToImageTo3D">
+        <view class="card-icon image-to-3d">
+          <image src="/images/image-to-3d-icon.png" />
+        </view>
+        <view class="card-content">
+          <text class="card-title">图转3D</text>
+          <text class="card-desc">生成3D立体模型效果</text>
+        </view>
+        <view class="card-badge premium">VIP</view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 最近作品区域 -->
+  <view class="recent-section" wx:if="{{recentWorks.length > 0}}">
+    <view class="section-title">
+      <text class="title-text">最近作品</text>
+      <text class="more-link" bind:tap="navigateToGallery">查看更多</text>
+    </view>
+
+    <scroll-view class="works-scroll" scroll-x="true">
+      <view class="works-list">
+        <view class="work-item" wx:for="{{recentWorks}}" wx:key="id" bind:tap="previewWork" data-index="{{index}}">
+          <image class="work-image" src="{{item.imageUrl}}" mode="aspectFill" />
+          <view class="work-info">
+            <text class="work-title">{{item.prompt}}</text>
+            <text class="work-time">{{item.createTime}}</text>
+          </view>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-section" wx:else>
+    <image class="empty-icon" src="/images/empty-works.png" />
+    <text class="empty-text">还没有创作作品</text>
+    <text class="empty-desc">快来体验AI创作的魅力吧！</text>
+    <button class="start-create-btn" bind:tap="navigateToCreate">开始创作</button>
+  </view>
+
+  <!-- 底部信息区域 -->
+  <view class="footer-section">
+    <view class="stats-grid">
+      <view class="stat-item">
+        <text class="stat-number">{{userStats.totalWorks || 0}}</text>
+        <text class="stat-label">总作品</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{userStats.totalRequests || 0}}</text>
+        <text class="stat-label">总请求</text>
+      </view>
+      <view class="stat-item">
+        <text class="stat-number">{{userStats.todayRequests || 0}}</text>
+        <text class="stat-label">今日使用</text>
+      </view>
+    </view>
+  </view>
+</view>
+
+<!-- 加载状态 -->
+<view class="loading-overlay" wx:if="{{loading}}">
+  <view class="loading-content">
+    <image class="loading-icon spin" src="/images/loading.png" />
+    <text class="loading-text">加载中...</text>
+  </view>
+</view>

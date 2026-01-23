@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="${title} + ' - 31度文创精灵管理后台'">用户管理</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root { --sidebar-width: 280px; --primary-color: #667eea; }
+        body { font-family: Arial, sans-serif; background: #f8f9fa; }
+        .sidebar { position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100vh; 
+                  background: linear-gradient(135deg, var(--primary-color) 0%, #764ba2 100%); z-index: 1000; }
+        .sidebar-header { padding: 20px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); }
+        .sidebar-header h4 { color: white; margin: 10px 0 0; font-weight: 700; }
+        .sidebar-header i { font-size: 3rem; color: white; }
+        .nav-link { color: rgba(255,255,255,0.8); padding: 15px 25px; display: flex; align-items: center; }
+        .nav-link.active, .nav-link:hover { color: white; background: rgba(255,255,255,0.1); }
+        .main-content { margin-left: var(--sidebar-width); min-height: 100vh; }
+        .topbar { background: white; box-shadow: 0 2px 10px rgba(0,0,0,0.1); padding: 15px 30px; }
+        .content { padding: 30px; }
+        .table-container { background: white; border-radius: 15px; padding: 25px; 
+                          box-shadow: 0 5px 15px rgba(0,0,0,0.08); }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; }
+        .stat-card { background: white; border-radius: 15px; padding: 25px; 
+                    box-shadow: 0 5px 15px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <!-- 侧边栏 -->
+    <nav class="sidebar">
+        <div class="sidebar-header">
+            <i class="fas fa-palette"></i>
+            <h4>31度文创精灵</h4>
+        </div>
+        <div class="sidebar-nav">
+            <ul class="nav flex-column">
+                <li class="nav-item"><a class="nav-link" href="/admin/"><i class="fas fa-tachometer-alt me-3"></i>仪表盘</a></li>
+                <li class="nav-item"><a class="nav-link active" href="/admin/users"><i class="fas fa-users me-3"></i>用户管理</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/tasks"><i class="fas fa-tasks me-3"></i>AI任务管理</a></li>
+                <li class="nav-item"><a class="nav-link" href="/admin/orders"><i class="fas fa-shopping-cart me-3"></i>订单管理</a></li>
+            </ul>
+        </div>
+    </nav>
+    
+    <!-- 主内容 -->
+    <div class="main-content">
+        <div class="topbar">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb mb-0">
+                    <li class="breadcrumb-item"><a href="/admin">首页</a></li>
+                    <li class="breadcrumb-item active">用户管理</li>
+                </ol>
+            </nav>
+        </div>
+        
+        <div class="content">
+            <h1 class="mb-4" th:text="${pageTitle}">用户管理</h1>
+            
+            <!-- 统计卡片 -->
+            <div class="row mb-4">
+                <div class="col-md-3"><div class="stat-card text-center"><h3 id="totalUsers">-</h3><p>总用户数</p></div></div>
+                <div class="col-md-3"><div class="stat-card text-center"><h3 id="activeUsers">-</h3><p>活跃用户</p></div></div>
+                <div class="col-md-3"><div class="stat-card text-center"><h3 id="vipUsers">-</h3><p>VIP用户</p></div></div>
+                <div class="col-md-3"><div class="stat-card text-center"><h3 id="todayRegister">-</h3><p>今日新增</p></div></div>
+            </div>
+            
+            <!-- 搜索区域 -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <form id="searchForm" class="row g-3">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control" id="keyword" placeholder="搜索用户昵称或手机号">
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="vipLevel">
+                                <option value="">全部等级</option>
+                                <option value="NORMAL">普通用户</option>
+                                <option value="VIP">VIP会员</option>
+                                <option value="PREMIUM">尊享会员</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <select class="form-select" id="status">
+                                <option value="">全部状态</option>
+                                <option value="1">正常</option>
+                                <option value="0">禁用</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <button type="button" class="btn btn-primary" onclick="searchUsers()">
+                                <i class="fas fa-search me-1"></i>搜索
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- 用户列表 -->
+            <div class="table-container">
+                <div class="d-flex justify-content-between mb-3">
+                    <h5>用户列表</h5>
+                    <button class="btn btn-outline-primary btn-sm" onclick="refreshUserList()">
+                        <i class="fas fa-sync-alt me-1"></i>刷新
+                    </button>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>用户信息</th>
+                                <th>VIP等级</th>
+                                <th>使用统计</th>
+                                <th>状态</th>
+                                <th>注册时间</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="userTableBody">
+                            <!-- 数据将通过JavaScript加载 -->
+                        </tbody>
+                    </table>
+                </div>
+                
+                <nav><ul class="pagination justify-content-center mt-3" id="pagination"></ul></nav>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 用户详情模态框 -->
+    <div class="modal fade" id="userDetailModal">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">用户详情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="userDetailBody"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let currentPage = 1;
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            loadUserStatistics();
+            loadUserList();
+        });
+        
+        function loadUserStatistics() {
+            fetch('/admin/users/statistics')
+                .then(r => r.json())
+                .then(result => {
+                    if (result.code === 200) {
+                        const d = result.data;
+                        document.getElementById('totalUsers').textContent = d.totalUsers;
+                        document.getElementById('activeUsers').textContent = d.activeUsers;
+                        document.getElementById('vipUsers').textContent = d.vipUsers;
+                        document.getElementById('todayRegister').textContent = d.todayRegister;
+                    }
+                });
+        }
+        
+        function loadUserList(page = 1) {
+            const formData = new FormData(document.getElementById('searchForm'));
+            formData.append('page', page);
+            
+            fetch('/admin/users/list', { method: 'POST', body: formData })
+                .then(r => r.json())
+                .then(result => {
+                    if (result.code === 200) {
+                        renderUserTable(result.data.records);
+                        renderPagination(result.data);
+                    }
+                });
+        }
+        
+        function renderUserTable(users) {
+            const tbody = document.getElementById('userTableBody');
+            tbody.innerHTML = users.map(user => `
+                <tr>
+                    <td>
+                        <div class="d-flex align-items-center">
+                            <img src="${user.avatarUrl}" class="avatar me-3">
+                            <div>
+                                <div class="fw-bold">${user.nickname}</div>
+                                <small class="text-muted">${user.phone}</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td><span class="badge bg-${getVipColor(user.vipLevel)}">${user.vipLevelText}</span></td>
+                    <td><small>请求: ${user.totalRequests}<br>作品: ${user.totalWorks}</small></td>
+                    <td><span class="badge bg-${user.status === 1 ? 'success' : 'danger'}">${user.statusText}</span></td>
+                    <td><small>${user.registerTime}</small></td>
+                    <td>
+                        <button class="btn btn-outline-primary btn-sm" onclick="viewUserDetail(${user.id})">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <button class="btn btn-outline-${user.status === 1 ? 'warning' : 'success'} btn-sm" 
+                            onclick="toggleUserStatus(${user.id}, ${user.status === 1 ? 0 : 1})">
+                            <i class="fas fa-${user.status === 1 ? 'ban' : 'check'}"></i>
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+        
+        function renderPagination(data) {
+            const pagination = document.getElementById('pagination');
+            let html = '';
+            
+            if (data.current > 1) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="loadUserList(${data.current - 1})">上一页</a></li>`;
+            }
+            
+            for (let i = Math.max(1, data.current - 2); i <= Math.min(data.pages, data.current + 2); i++) {
+                html += `<li class="page-item ${i === data.current ? 'active' : ''}">
+                    <a class="page-link" href="#" onclick="loadUserList(${i})">${i}</a></li>`;
+            }
+            
+            if (data.current < data.pages) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="loadUserList(${data.current + 1})">下一页</a></li>`;
+            }
+            
+            pagination.innerHTML = html;
+            currentPage = data.current;
+        }
+        
+        function getVipColor(level) {
+            return level === 'VIP' ? 'warning' : level === 'PREMIUM' ? 'danger' : 'secondary';
+        }
+        
+        function searchUsers() { loadUserList(1); }
+        function refreshUserList() { loadUserStatistics(); loadUserList(currentPage); }
+        
+        function viewUserDetail(userId) {
+            fetch(`/admin/users/${userId}/detail`)
+                .then(r => r.json())
+                .then(result => {
+                    if (result.code === 200) {
+                        const user = result.data;
+                        document.getElementById('userDetailBody').innerHTML = `
+                            <div class="row">
+                                <div class="col-md-4 text-center">
+                                    <img src="${user.avatarUrl}" class="img-fluid rounded-circle mb-3" style="max-width: 120px;">
+                                    <h5>${user.nickname}</h5>
+                                </div>
+                                <div class="col-md-8">
+                                    <table class="table table-sm">
+                                        <tr><td>用户ID:</td><td>${user.id}</td></tr>
+                                        <tr><td>手机号:</td><td>${user.phone}</td></tr>
+                                        <tr><td>VIP等级:</td><td>${getVipText(user.vipLevel)}</td></tr>
+                                        <tr><td>总请求:</td><td>${user.totalRequests}</td></tr>
+                                        <tr><td>总作品:</td><td>${user.totalWorks}</td></tr>
+                                        <tr><td>注册时间:</td><td>${user.registerTime}</td></tr>
+                                    </table>
+                                </div>
+                            </div>
+                        `;
+                        new bootstrap.Modal(document.getElementById('userDetailModal')).show();
+                    }
+                });
+        }
+        
+        function toggleUserStatus(userId, newStatus) {
+            if (confirm(`确定要${newStatus === 1 ? '启用' : '禁用'}该用户吗？`)) {
+                const formData = new FormData();
+                formData.append('status', newStatus);
+                
+                fetch(`/admin/users/${userId}/status`, { method: 'POST', body: formData })
+                    .then(r => r.json())
+                    .then(result => {
+                        if (result.code === 200) {
+                            alert(result.message);
+                            loadUserList(currentPage);
+                        } else {
+                            alert('操作失败: ' + result.message);
+                        }
+                    });
+            }
+        }
+        
+        function getVipText(level) {
+            return level === 'VIP' ? 'VIP会员' : level === 'PREMIUM' ? '尊享会员' : '普通用户';
+        }
+    </script>
+</body>
+</html>

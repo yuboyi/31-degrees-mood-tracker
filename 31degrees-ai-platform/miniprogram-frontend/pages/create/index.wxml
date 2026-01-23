@@ -1,0 +1,165 @@
+<!--pages/create/index.wxml-->
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header">
+    <text class="page-title">AI创作工作台</text>
+    <text class="page-subtitle">选择您需要的AI创作功能</text>
+  </view>
+
+  <!-- 用户状态卡片 -->
+  <view class="user-status-card" wx:if="{{userInfo}}">
+    <view class="status-info">
+      <image class="user-avatar" src="{{userInfo.avatarUrl || '/images/default-avatar.png'}}" />
+      <view class="user-detail">
+        <text class="user-name">{{userInfo.nickname || '用户'}}</text>
+        <view class="vip-badge" wx:if="{{userInfo.vipLevel !== 'NORMAL'}}">
+          <text class="vip-text">{{userInfo.vipLevel}}</text>
+        </view>
+      </view>
+    </view>
+    <view class="quota-info">
+      <text class="quota-label">今日剩余</text>
+      <text class="quota-number">{{remainingRequests}}</text>
+      <text class="quota-unit">次</text>
+    </view>
+  </view>
+
+  <!-- 创作功能列表 -->
+  <view class="create-functions">
+    
+    <!-- 文生图 -->
+    <view class="function-card" bind:tap="navigateToTextToImage">
+      <view class="card-header">
+        <view class="function-icon text-to-image">
+          <image src="/images/text-to-image-icon.png" />
+        </view>
+        <view class="function-info">
+          <text class="function-title">文字生成图像</text>
+          <text class="function-desc">输入描述文字，AI为您创作精美图片</text>
+        </view>
+        <view class="function-badge hot">热门</view>
+      </view>
+      <view class="card-footer">
+        <text class="cost-info">消耗 1 次使用机会</text>
+        <view class="arrow-icon">
+          <image src="/images/arrow-right.png" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 图生图 -->
+    <view class="function-card" bind:tap="navigateToImageToImage">
+      <view class="card-header">
+        <view class="function-icon image-to-image">
+          <image src="/images/image-to-image-icon.png" />
+        </view>
+        <view class="function-info">
+          <text class="function-title">图像重新创作</text>
+          <text class="function-desc">基于现有图片进行AI重新创作</text>
+        </view>
+      </view>
+      <view class="card-footer">
+        <text class="cost-info">消耗 1 次使用机会</text>
+        <view class="arrow-icon">
+          <image src="/images/arrow-right.png" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 图转2.5D -->
+    <view class="function-card" bind:tap="navigateToImageTo25D">
+      <view class="card-header">
+        <view class="function-icon image-to-25d">
+          <image src="/images/image-to-25d-icon.png" />
+        </view>
+        <view class="function-info">
+          <text class="function-title">图片转2.5D效果</text>
+          <text class="function-desc">将平面图片转换为立体2.5D效果</text>
+        </view>
+        <view class="function-badge new">新功能</view>
+      </view>
+      <view class="card-footer">
+        <text class="cost-info">消耗 2 次使用机会</text>
+        <view class="arrow-icon">
+          <image src="/images/arrow-right.png" />
+        </view>
+      </view>
+    </view>
+
+    <!-- 图转3D -->
+    <view class="function-card premium" bind:tap="navigateToImageTo3D">
+      <view class="card-header">
+        <view class="function-icon image-to-3d">
+          <image src="/images/image-to-3d-icon.png" />
+        </view>
+        <view class="function-info">
+          <text class="function-title">图片转3D模型</text>
+          <text class="function-desc">生成完整的3D立体模型效果</text>
+        </view>
+        <view class="function-badge premium">VIP</view>
+      </view>
+      <view class="card-footer">
+        <text class="cost-info">消耗 5 次使用机会</text>
+        <view class="arrow-icon">
+          <image src="/images/arrow-right.png" />
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 使用技巧 -->
+  <view class="tips-section">
+    <view class="tips-header">
+      <image class="tips-icon" src="/images/tips-icon.png" />
+      <text class="tips-title">创作小贴士</text>
+    </view>
+    <view class="tips-list">
+      <text class="tip-item">• 文字描述越详细，生成效果越理想</text>
+      <text class="tip-item">• 建议使用中英文混合描述，效果更佳</text>
+      <text class="tip-item">• 可以指定艺术风格，如"水彩画风格"</text>
+      <text class="tip-item">• 图生图功能可以在原图基础上进行创意变化</text>
+    </view>
+  </view>
+
+  <!-- 最近任务 -->
+  <view class="recent-tasks-section" wx:if="{{recentTasks.length > 0}}">
+    <view class="section-header">
+      <text class="section-title">最近任务</text>
+      <text class="view-all" bind:tap="viewAllTasks">查看全部</text>
+    </view>
+    <view class="tasks-list">
+      <view class="task-item" wx:for="{{recentTasks}}" wx:key="id" bind:tap="viewTaskDetail" data-task="{{item}}">
+        <view class="task-preview">
+          <image class="task-image" src="{{item.resultImageUrl || '/images/task-placeholder.png'}}" mode="aspectFill" />
+          <view class="task-status {{item.status}}">
+            <text>{{item.statusText}}</text>
+          </view>
+        </view>
+        <view class="task-info">
+          <text class="task-prompt">{{item.prompt}}</text>
+          <text class="task-time">{{item.createTime}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 空状态 -->
+  <view class="empty-state" wx:else>
+    <image class="empty-icon" src="/images/empty-tasks.png" />
+    <text class="empty-title">还没有创作记录</text>
+    <text class="empty-desc">快来体验AI创作的魅力吧！</text>
+  </view>
+</view>
+
+<!-- 登录提示弹窗 -->
+<view class="login-modal" wx:if="{{showLoginModal}}">
+  <view class="modal-overlay" bind:tap="hideLoginModal"></view>
+  <view class="modal-content">
+    <text class="modal-title">需要登录</text>
+    <text class="modal-message">请先登录后再使用AI创作功能</text>
+    <view class="modal-buttons">
+      <button class="cancel-btn" bind:tap="hideLoginModal">取消</button>
+      <button class="login-btn" bind:tap="handleLogin">立即登录</button>
+    </view>
+  </view>
+</view>

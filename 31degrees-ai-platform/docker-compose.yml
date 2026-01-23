@@ -1,0 +1,125 @@
+version: '3.8'
+
+services:
+  # MySQL数据库
+  mysql:
+    image: mysql:8.0
+    container_name: ai-platform-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ai_platform
+      MYSQL_USER: ai_user
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./deployment/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "3306:3306"
+    networks:
+      - ai-platform-network
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  # Redis缓存
+  redis:
+    image: redis:7-alpine
+    container_name: ai-platform-redis
+    restart: unless-stopped
+    volumes:
+      - redis-data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - ai-platform-network
+    command: redis-server --appendonly yes
+
+  # 后端API服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: ai-platform-backend
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ai_platform?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+      SPRING_DATASOURCE_USERNAME: ai_user
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_REDIS_HOST: redis
+      SPRING_REDIS_PORT: 6379
+      # 阿里云OSS配置
+      ALIYUN_OSS_ENDPOINT: ${ALIYUN_OSS_ENDPOINT}
+      ALIYUN_OSS_ACCESS_KEY_ID: ${ALIYUN_OSS_ACCESS_KEY_ID}
+      ALIYUN_OSS_ACCESS_KEY_SECRET: ${ALIYUN_OSS_ACCESS_KEY_SECRET}
+      ALIYUN_OSS_BUCKET_NAME: ${ALIYUN_OSS_BUCKET_NAME}
+      # 百度AI配置
+      BAIDU_AI_API_KEY: ${BAIDU_AI_API_KEY}
+      BAIDU_AI_SECRET_KEY: ${BAIDU_AI_SECRET_KEY}
+      # 微信小程序配置
+      WECHAT_APPID: ${WECHAT_APPID}
+      WECHAT_SECRET: ${WECHAT_SECRET}
+      # 微信支付配置
+      WECHAT_PAY_MCH_ID: ${WECHAT_PAY_MCH_ID}
+      WECHAT_PAY_PRIVATE_KEY_PATH: ${WECHAT_PAY_PRIVATE_KEY_PATH}
+      WECHAT_PAY_MERCHANT_SERIAL_NUMBER: ${WECHAT_PAY_MERCHANT_SERIAL_NUMBER}
+      WECHAT_PAY_API_V3_KEY: ${WECHAT_PAY_API_V3_KEY}
+    ports:
+      - "8080:8080"
+    networks:
+      - ai-platform-network
+    depends_on:
+      - mysql
+      - redis
+    volumes:
+      - ./deployment/wechat-pay-cert:/app/cert
+      - ./logs/backend:/app/logs
+
+  # 管理后台服务
+  admin:
+    build:
+      context: ./admin-backend
+      dockerfile: Dockerfile
+    container_name: ai-platform-admin
+    restart: unless-stopped
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/ai_platform?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=GMT%2B8
+      SPRING_DATASOURCE_USERNAME: ai_user
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    ports:
+      - "8081:8081"
+    networks:
+      - ai-platform-network
+    depends_on:
+      - mysql
+    volumes:
+      - ./logs/admin:/app/logs
+
+  # Nginx反向代理
+  nginx:
+    image: nginx:alpine
+    container_name: ai-platform-nginx
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deployment/nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./deployment/nginx/conf.d:/etc/nginx/conf.d
+      - ./deployment/ssl:/etc/nginx/ssl
+      - ./logs/nginx:/var/log/nginx
+    networks:
+      - ai-platform-network
+    depends_on:
+      - backend
+      - admin
+
+volumes:
+  mysql-data:
+    driver: local
+  redis-data:
+    driver: local
+
+networks:
+  ai-platform-network:
+    driver: bridge

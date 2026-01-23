@@ -1,0 +1,138 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /api
+
+spring:
+  application:
+    name: 31degrees-ai-platform
+  
+  # 数据库配置
+  datasource:
+    url: jdbc:mysql://localhost:3306/ai_platform?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:123456}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
+      connection-timeout: 30000
+      idle-timeout: 600000
+      max-lifetime: 1800000
+  
+  # JPA配置
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+  
+  # Redis配置
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      database: 0
+      timeout: 2000ms
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: 2000ms
+  
+  # 文件上传配置
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 100MB
+
+# JWT配置
+jwt:
+  secret: ${JWT_SECRET:31degrees-ai-platform-jwt-secret-key-2025}
+  expiration: 86400000 # 24小时，单位：毫秒
+  header: Authorization
+  prefix: "Bearer "
+
+# 微信小程序配置
+wechat:
+  miniprogram:
+    app-id: ${WECHAT_APP_ID:your-miniprogram-app-id}
+    app-secret: ${WECHAT_APP_SECRET:your-miniprogram-app-secret}
+    login-url: https://api.weixin.qq.com/sns/jscode2session
+
+# AI绘画API配置
+ai:
+  # 百度文心一格
+  baidu:
+    api-key: ${BAIDU_API_KEY:your-baidu-api-key}
+    secret-key: ${BAIDU_SECRET_KEY:your-baidu-secret-key}
+    text-to-image-url: https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/text2image/sd_xl
+    image-to-image-url: https://aip.baidubce.com/rpc/2.0/ai_custom/v1/wenxinworkshop/image2image/sd_xl
+  
+  # 阿里通义万相 (备用)
+  aliyun:
+    access-key-id: ${ALIYUN_ACCESS_KEY_ID:your-aliyun-access-key-id}
+    access-key-secret: ${ALIYUN_ACCESS_KEY_SECRET:your-aliyun-access-key-secret}
+    endpoint: https://dashscope.aliyuncs.com/api/v1/services/aigc/text2image/image-synthesis
+
+# 阿里云OSS配置
+aliyun:
+  oss:
+    endpoint: ${OSS_ENDPOINT:oss-cn-hangzhou.aliyuncs.com}
+    access-key-id: ${OSS_ACCESS_KEY_ID:your-oss-access-key-id}
+    access-key-secret: ${OSS_ACCESS_KEY_SECRET:your-oss-access-key-secret}
+    bucket-name: ${OSS_BUCKET_NAME:31degrees-ai-images}
+    cdn-domain: ${OSS_CDN_DOMAIN:https://cdn.your-domain.com}
+
+# 日志配置
+logging:
+  level:
+    com.degrees31.aiplatform: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID}){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n%wEx"
+
+# 跨域配置
+cors:
+  allowed-origins: 
+    - "https://servicewechat.com"
+    - "http://localhost:3000"
+    - "https://your-admin-domain.com"
+  allowed-methods:
+    - GET
+    - POST
+    - PUT
+    - DELETE
+    - OPTIONS
+  allowed-headers: "*"
+  allow-credentials: true
+
+# 管理配置
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,prometheus
+  endpoint:
+    health:
+      show-details: when_authorized
+
+# 自定义配置
+app:
+  # 文件存储配置
+  upload:
+    path: ${UPLOAD_PATH:./uploads/}
+    max-size: 10MB
+  
+  # 业务配置
+  business:
+    max-daily-requests: 100  # 每日最大请求次数
+    default-image-style: "写实"  # 默认图片风格
+    supported-formats: ["jpg", "jpeg", "png", "webp"]  # 支持的图片格式

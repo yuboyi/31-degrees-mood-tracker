@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-gray-50 text-gray-900 font-sans;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply bg-gray-200 hover:bg-gray-300 text-gray-800 px-4 py-2 rounded-lg font-medium transition-colors duration-200;
+  }
+  
+  .card {
+    @apply bg-white rounded-xl shadow-sm border border-gray-100 p-6;
+  }
+  
+  .mood-excellent {
+    @apply bg-mood-excellent text-white;
+  }
+  
+  .mood-good {
+    @apply bg-mood-good text-white;
+  }
+  
+  .mood-neutral {
+    @apply bg-mood-neutral text-white;
+  }
+  
+  .mood-bad {
+    @apply bg-mood-bad text-white;
+  }
+  
+  .mood-terrible {
+    @apply bg-mood-terrible text-white;
+  }
+}
+
+@layer utilities {
+  .content-auto {
+    content-visibility: auto;
+  }
+
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-lg;
+  }
+
+  .form-input {
+    @apply w-full rounded-md border border-gray-300 px-4 py-2 transition-all focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary;
+  }
+
+  .status-dot {
+    @apply mr-1.5 inline-block h-2 w-2 rounded-full;
+  }
+
+  .progress-bar {
+    @apply h-2 overflow-hidden rounded-full bg-gray-200;
+  }
+
+  .progress-value {
+    @apply h-full transition-all duration-500 ease-out;
+  }
+}

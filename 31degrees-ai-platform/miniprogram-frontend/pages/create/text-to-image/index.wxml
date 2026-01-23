@@ -1,0 +1,188 @@
+<!--pages/create/text-to-image/index.wxml-->
+<view class="container">
+  <!-- 顶部标题 -->
+  <view class="header">
+    <text class="page-title">文生图创作</text>
+    <text class="page-subtitle">输入文字描述，AI为您生成精美图片</text>
+  </view>
+
+  <!-- 提示词输入区域 -->
+  <view class="prompt-section">
+    <view class="input-group">
+      <text class="input-label">创作描述 *</text>
+      <textarea class="prompt-input" 
+                placeholder="请详细描述您想要生成的图片，例如：一只可爱的小猫在花园里玩耍，水彩画风格，温暖的阳光" 
+                bind:input="onPromptInput"
+                value="{{prompt}}"
+                maxlength="500"
+                auto-height
+                show-confirm-bar="{{false}}" />
+      <view class="input-counter">{{prompt.length}}/500</view>
+    </view>
+
+    <!-- 负面提示词 -->
+    <view class="input-group" wx:if="{{showAdvanced}}">
+      <text class="input-label">负面描述（可选）</text>
+      <textarea class="prompt-input negative" 
+                placeholder="描述您不希望在图片中出现的元素，例如：模糊，变形，低质量" 
+                bind:input="onNegativePromptInput"
+                value="{{negativePrompt}}"
+                maxlength="200"
+                auto-height
+                show-confirm-bar="{{false}}" />
+      <view class="input-counter">{{negativePrompt.length}}/200</view>
+    </view>
+
+    <!-- 快速提示词 -->
+    <view class="quick-prompts">
+      <text class="section-label">快速添加</text>
+      <scroll-view class="prompts-scroll" scroll-x="true">
+        <view class="prompts-list">
+          <view class="prompt-tag" wx:for="{{quickPrompts}}" wx:key="id" bind:tap="addQuickPrompt" data-prompt="{{item.text}}">
+            <text>{{item.text}}</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+  </view>
+
+  <!-- 参数设置区域 -->
+  <view class="settings-section">
+    <view class="settings-header" bind:tap="toggleAdvanced">
+      <text class="section-title">参数设置</text>
+      <image class="toggle-icon {{showAdvanced ? 'active' : ''}}" src="/images/arrow-down.png" />
+    </view>
+    
+    <view class="settings-content" wx:if="{{showAdvanced}}">
+      <!-- 艺术风格 -->
+      <view class="setting-group">
+        <text class="setting-label">艺术风格</text>
+        <scroll-view class="style-scroll" scroll-x="true">
+          <view class="style-list">
+            <view class="style-item {{selectedStyle === item.key ? 'active' : ''}}" 
+                  wx:for="{{styles}}" wx:key="key" 
+                  bind:tap="selectStyle" data-style="{{item.key}}">
+              <image class="style-preview" src="{{item.preview}}" />
+              <text class="style-name">{{item.name}}</text>
+            </view>
+          </view>
+        </scroll-view>
+      </view>
+
+      <!-- 图片尺寸 -->
+      <view class="setting-group">
+        <text class="setting-label">图片尺寸</text>
+        <view class="size-options">
+          <view class="size-item {{selectedSize.key === item.key ? 'active' : ''}}" 
+                wx:for="{{imageSizes}}" wx:key="key" 
+                bind:tap="selectSize" data-size="{{item}}">
+            <text class="size-text">{{item.name}}</text>
+            <text class="size-desc">{{item.width}}×{{item.height}}</text>
+          </view>
+        </view>
+      </view>
+
+      <!-- 生成数量 -->
+      <view class="setting-group">
+        <text class="setting-label">生成数量</text>
+        <view class="quantity-selector">
+          <view class="quantity-btn" bind:tap="changeQuantity" data-action="minus">
+            <text>-</text>
+          </view>
+          <text class="quantity-display">{{generateCount}}</text>
+          <view class="quantity-btn" bind:tap="changeQuantity" data-action="plus">
+            <text>+</text>
+          </view>
+        </view>
+        <text class="quantity-tip">每次最多生成4张图片</text>
+      </view>
+    </view>
+  </view>
+
+  <!-- 费用说明 -->
+  <view class="cost-section">
+    <view class="cost-info">
+      <image class="cost-icon" src="/images/coin-icon.png" />
+      <text class="cost-text">预计消耗：{{estimatedCost}} 次使用机会</text>
+    </view>
+    <text class="remaining-text">剩余：{{remainingRequests}} 次</text>
+  </view>
+
+  <!-- 生成按钮 -->
+  <view class="action-section">
+    <button class="generate-btn {{!canGenerate ? 'disabled' : ''}}" 
+            bind:tap="generateImage" 
+            disabled="{{!canGenerate || generating}}">
+      <text wx:if="{{!generating}}">{{generateBtnText}}</text>
+      <view wx:else class="generating">
+        <image class="loading-icon spin" src="/images/loading.png" />
+        <text>AI创作中...</text>
+      </view>
+    </button>
+  </view>
+
+  <!-- 生成结果 -->
+  <view class="result-section" wx:if="{{results.length > 0}}">
+    <view class="result-header">
+      <text class="result-title">生成结果</text>
+      <text class="result-count">{{results.length}}张图片</text>
+    </view>
+    
+    <view class="result-grid">
+      <view class="result-item" wx:for="{{results}}" wx:key="id" bind:tap="previewResult" data-index="{{index}}">
+        <image class="result-image" src="{{item.imageUrl}}" mode="aspectFill" />
+        <view class="result-overlay">
+          <view class="result-actions">
+            <view class="action-btn" bind:tap="downloadResult" data-item="{{item}}" catchtap="true">
+              <image class="action-icon" src="/images/download-icon.png" />
+              <text class="action-text">保存</text>
+            </view>
+            <view class="action-btn" bind:tap="shareResult" data-item="{{item}}" catchtap="true">
+              <image class="action-icon" src="/images/share-icon.png" />
+              <text class="action-text">分享</text>
+            </view>
+            <view class="action-btn" bind:tap="recreateFromResult" data-item="{{item}}" catchtap="true">
+              <image class="action-icon" src="/images/recreate-icon.png" />
+              <text class="action-text">再创作</text>
+            </view>
+          </view>
+        </view>
+        <view class="result-status {{item.status}}">
+          <text>{{item.statusText}}</text>
+        </view>
+      </view>
+    </view>
+  </view>
+
+  <!-- 历史记录 -->
+  <view class="history-section" wx:if="{{history.length > 0}}">
+    <view class="history-header">
+      <text class="section-title">最近创作</text>
+      <text class="view-all" bind:tap="viewAllHistory">查看全部</text>
+    </view>
+    
+    <scroll-view class="history-scroll" scroll-x="true">
+      <view class="history-list">
+        <view class="history-item" wx:for="{{history}}" wx:key="id" bind:tap="loadHistoryPrompt" data-item="{{item}}">
+          <image class="history-image" src="{{item.imageUrl || '/images/history-placeholder.png'}}" mode="aspectFill" />
+          <text class="history-prompt">{{item.prompt}}</text>
+          <text class="history-time">{{item.createTime}}</text>
+        </view>
+      </view>
+    </scroll-view>
+  </view>
+</view>
+
+<!-- 费用不足弹窗 -->
+<view class="insufficient-modal" wx:if="{{showInsufficientModal}}">
+  <view class="modal-overlay" bind:tap="hideInsufficientModal"></view>
+  <view class="modal-content">
+    <image class="modal-icon" src="/images/coin-empty.png" />
+    <text class="modal-title">使用次数不足</text>
+    <text class="modal-message">您今日的使用次数已用完，请升级VIP或等待明日重置</text>
+    <view class="modal-buttons">
+      <button class="modal-btn secondary" bind:tap="hideInsufficientModal">知道了</button>
+      <button class="modal-btn primary" bind:tap="navigateToVip">升级VIP</button>
+    </view>
+  </view>
+</view>
