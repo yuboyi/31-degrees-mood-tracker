@@ -1,0 +1,257 @@
+{
+  "easycom": {
+    "autoscan": true,
+    "custom": {
+      "^u-(.*)": "uview-plus/components/u-$1/u-$1.vue"
+    }
+  },
+  "pages": [
+    {
+      "path": "pages/index/index",
+      "style": {
+        "navigationStyle": "custom",
+        "navigationBarTitleText": "31度",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/creative/index",
+      "style": {
+        "navigationBarTitleText": "3D文创定制",
+        "navigationBarBackgroundColor": "#171a23",
+        "navigationBarTextStyle": "white"
+      }
+    },
+    {
+      "path": "pages/text25d/index",
+      "style": {
+        "navigationBarTitleText": "文生2.5D",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/image25d/index",
+      "style": {
+        "navigationBarTitleText": "AI工艺预检",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/photobooth/index",
+      "style": {
+        "navigationBarTitleText": "AIGC互动拍照机",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/coin/index",
+      "style": {
+        "navigationBarTitleText": "AI纪念币",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/editor/editor",
+      "style": {
+        "navigationBarTitleText": "彩印喷墨定制",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/my/my",
+      "style": {
+        "navigationBarTitleText": "我的",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/store/index",
+      "style": {
+        "navigationBarTitleText": "门店管理",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/store/withdraw",
+      "style": {
+        "navigationBarTitleText": "积分提现",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/qrcode/index",
+      "style": {
+        "navigationBarTitleText": "",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/machine/index",
+      "style": {
+        "navigationBarTitleText": "光学激光定制",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/machine/upload",
+      "style": {
+        "navigationBarTitleText": "上传照片",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/machine/status",
+      "style": {
+        "navigationBarTitleText": "处理状态",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/store/machine-detail",
+      "style": {
+        "navigationBarTitleText": "设备详情",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/orders/index",
+      "style": {
+        "navigationBarTitleText": "历史订单",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/materials/index",
+      "style": {
+        "navigationBarTitleText": "素材库",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/membership/index",
+      "style": {
+        "navigationBarTitleText": "会员中心",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/help/index",
+      "style": {
+        "navigationBarTitleText": "帮助中心",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/dev-preview/index",
+      "style": {
+        "navigationBarTitleText": "开发预览",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/create/index",
+      "style": {
+        "navigationBarTitleText": "光学激光定制",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/processing/mode",
+      "style": {
+        "navigationBarTitleText": "处理模式",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/processing/preview",
+      "style": {
+        "navigationBarTitleText": "预览结果",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black",
+        "disableScroll": true
+      }
+    },
+    {
+      "path": "pages/processing/export",
+      "style": {
+        "navigationBarTitleText": "导出结果",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/works/index",
+      "style": {
+        "navigationBarTitleText": "作品集",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black",
+        "enablePullDownRefresh": true
+      }
+    },
+    {
+      "path": "pages/works/detail",
+      "style": {
+        "navigationBarTitleText": "作品详情",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    },
+    {
+      "path": "pages/sample/submit",
+      "style": {
+        "navigationBarTitleText": "提交打样",
+        "navigationBarBackgroundColor": "#f6f7fb",
+        "navigationBarTextStyle": "black"
+      }
+    }
+  ],
+  "globalStyle": {
+    "navigationBarTextStyle": "black",
+    "navigationBarTitleText": "31度科技",
+    "navigationBarBackgroundColor": "#f6f7fb",
+    "backgroundColor": "#f6f7fb"
+  },
+  "tabBar": {
+    "color": "#9a9fae",
+    "selectedColor": "#ff4d3f",
+    "backgroundColor": "#1c0707",
+    "borderStyle": "black",
+    "list": [
+      {
+        "pagePath": "pages/index/index",
+        "text": "首页",
+        "iconPath": "static/images/tab-create.png",
+        "selectedIconPath": "static/images/tab-create-active.png"
+      },
+      {
+        "pagePath": "pages/my/my",
+        "text": "我的",
+        "iconPath": "static/images/tab-my.png",
+        "selectedIconPath": "static/images/tab-my-active.png"
+      }
+    ]
+  }
+}

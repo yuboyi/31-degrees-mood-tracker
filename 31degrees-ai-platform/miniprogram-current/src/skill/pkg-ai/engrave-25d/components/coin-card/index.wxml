@@ -1,0 +1,23 @@
+<view class="card">
+  <view class="card-title">{{title}}</view>
+
+  <view class="coin-box">
+    <image
+      wx:if="{{coin_url && !imgError}}"
+      class="coin-img"
+      src="{{coin_url}}"
+      mode="aspectFill"
+      bindload="onImgLoad"
+      binderror="onImgError"
+    />
+    <view wx:else class="coin-placeholder">预览图生成中</view>
+  </view>
+
+  <view class="params">
+    <text wx:if="{{materialText}}" class="param">材质：{{materialText}}</text>
+    <text wx:if="{{coin_size_mm}}" class="param">尺寸：{{coin_size_mm}}mm</text>
+    <text wx:if="{{ringText}}" class="param">币面文字：{{ringText}}</text>
+  </view>
+
+  <view class="btn" bindtap="onOpen">{{buttonText}}</view>
+</view>

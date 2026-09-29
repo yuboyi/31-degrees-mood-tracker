@@ -1,3 +1,4 @@
+> 2026-09-29 源码核对：本目录是原生四页历史版本，不代表本机现用小程序源码或已发布版本。27页的 uni-app / Vue 3 现用源码整合候选版见 [miniprogram-current](../miniprogram-current/README.md)。旧目录保留作历史参考。
 # 31度文创精灵微信小程序
 
 ## 📱 项目简介

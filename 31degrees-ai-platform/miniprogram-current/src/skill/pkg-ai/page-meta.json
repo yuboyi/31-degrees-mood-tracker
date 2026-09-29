@@ -1,0 +1,62 @@
+{
+  "pages": [
+    {
+      "path": "pages/image25d/index",
+      "name": "图转2.5D工艺预检",
+      "description": "上传照片生成2.5D内雕加工文件包（灰度图/BMP/2.5D预览/Z轴G代码/STL），选择材料尺寸工艺并提交打样",
+      "query": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "string", "description": "来源标识，微信AI接力时为ai" },
+          "mode": { "type": "string", "description": "接力模式，photo/text/booth/coin" }
+        }
+      }
+    },
+    {
+      "path": "pages/text25d/index",
+      "name": "文生2.5D",
+      "description": "输入一句话描述，生成2D图并转换为2.5D内雕预览与深度图",
+      "query": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "string", "description": "来源标识" },
+          "mode": { "type": "string", "description": "接力模式" }
+        }
+      }
+    },
+    {
+      "path": "pages/photobooth/index",
+      "name": "AIGC互动拍照机",
+      "description": "活动拍照机：上传照片选择风格模板（清凉夏日/国潮红/赛博蓝/暖金/纯净白/品牌定制）生成AI风格大片并转2.5D内雕预览",
+      "query": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "string", "description": "来源标识" },
+          "mode": { "type": "string", "description": "接力模式" }
+        }
+      }
+    },
+    {
+      "path": "pages/coin/index",
+      "name": "AI纪念币",
+      "description": "上传人像生成圆形纪念币（环绕文字/金银材质/多种尺寸），输出灰度图、BMP、STL加工包",
+      "query": {
+        "type": "object",
+        "properties": {
+          "from": { "type": "string", "description": "来源标识" },
+          "mode": { "type": "string", "description": "接力模式" }
+        }
+      }
+    },
+    {
+      "path": "pages/index/index",
+      "name": "首页",
+      "description": "31度AI定制小程序首页，提供图转2.5D、文生2.5D、AI拍照机、AI纪念币、官方耗材等入口"
+    },
+    {
+      "path": "pages/orders/index",
+      "name": "历史订单",
+      "description": "查看历史订单与加工任务状态"
+    }
+  ]
+}

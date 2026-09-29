@@ -1,0 +1,99 @@
+/* ============================================================
+ * 31° 全局 SCSS 设计系统
+ * ------------------------------------------------------------
+ * 第一部分：历史深色主题变量（存量页面 components/works/store/
+ *            machine/membership/editor 等继续引用，保持不变）
+ * 第二部分：浅色高级定制风设计 tokens（本次改版的 5 个页面使用）
+ * ============================================================ */
+
+/* ---------- 历史深色主题（存量页面继续使用，勿删勿改） ---------- */
+$primary: #dc2626;
+$primary-dark: #b91c1c;
+$accent: #f97316;
+$success: #22c55e;
+$warning: #f59e0b;
+$danger: #ef4444;
+
+$bg-dark: #0a0a0a;
+$bg-card: #141414;
+$bg-card-hover: #1e1e1e;
+$text-primary: #ffffff;
+$text-secondary: #a0a0a0;
+$text-muted: #555555;
+
+$border-subtle: rgba(255, 255, 255, 0.06);
+$border-default: rgba(255, 255, 255, 0.10);
+
+$radius-sm: 8rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+
+$shadow-card: 0 2rpx 16rpx rgba(0, 0, 0, 0.4);
+
+/* ---------- 浅色高级定制风 tokens ---------- */
+
+// 背景 / 卡片
+$page-bg: #F6F7FB;
+$card-bg: #FFFFFF;
+$card-padding: 32rpx;
+$card-radius: 24rpx;
+$card-shadow: 0 8rpx 24rpx rgba(26, 26, 46, 0.05);
+$divider: #EEEFF4;
+
+// 文字
+$ink-title: #1A1A2E;
+$ink-body: #555A6E;
+$ink-muted: #9A9FAE;
+
+// 主题红（主按钮 / 强调 / 光学激光）
+$brand-red: #FF5A4E;
+$brand-red-deep: #E62E2E;
+$grad-red: linear-gradient(135deg, #FF5A4E 0%, #E62E2E 100%);
+
+// 辅助蓝（文生2.5D / AI拍照机）
+$brand-blue: #1F8BFF;
+$brand-blue-deep: #0B6DE8;
+$grad-blue: linear-gradient(135deg, #4DA9FF 0%, #1F8BFF 52%, #0B6DE8 100%);
+
+// 辅助金（AI纪念币）
+$brand-gold: #F5A623;
+$brand-gold-deep: #E08A0E;
+$grad-gold: linear-gradient(135deg, #FFC24D 0%, #F5A623 50%, #E08A0E 100%);
+
+// 语义色（浅色主题）
+$ok: #22C55E;
+$warn: #F5A623;
+$bad: #E62E2E;
+
+// 控件
+$field-bg: #F1F2F6;
+$field-radius: 16rpx;
+$btn-height: 88rpx;
+$btn-radius: 44rpx;
+$chip-height: 64rpx;
+$chip-radius: 32rpx;
+
+// 布局
+$page-gap: 32rpx;      // 页面左右留白
+$section-gap: 24rpx;   // 区块间距
+$bottom-pad: 160rpx;   // 底部操作区留白
+
+/* ---------- 全局样式 ---------- */
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.text-gradient {
+  background: linear-gradient(135deg, $primary, #ef4444);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
