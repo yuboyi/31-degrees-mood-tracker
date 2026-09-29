@@ -1,0 +1,241 @@
+{
+  "apis": [
+    {
+      "name": "startPhotoEngraving",
+      "description": "照片转2.5D内雕加工包：用户上传照片（人像/图案）后，生成灰度深度图、8位灰度BMP、2.5D浮雕预览、Z轴G代码、STL高度模型与设备参数文件。当用户发送照片并说「转成2.5D内雕图」「做内雕」「内雕加工」「生成内雕文件」等，或需要照片内雕加工文件时调用；需要先做画质增强时传 optimize=true。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "imagePath": {
+            "type": "string",
+            "format": "image",
+            "description": "用户上传的照片本地路径（png/jpg，单张≤10M）"
+          },
+          "material": {
+            "type": "string",
+            "description": "加工材料，默认水晶"
+          },
+          "sizeText": {
+            "type": "string",
+            "description": "成品尺寸文本，默认80x80x80mm"
+          },
+          "optimize": {
+            "type": "boolean",
+            "description": "是否先做画质增强，默认false"
+          }
+        },
+        "required": ["imagePath"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "depth_url": { "type": "string", "description": "灰度深度图" },
+          "pod3d_url": { "type": "string", "description": "2.5D浮雕预览图" },
+          "bmp_url": { "type": "string", "description": "8位灰度BMP" },
+          "z_gcode_url": { "type": "string", "description": "Z轴G代码" },
+          "stl_url": { "type": "string", "description": "STL高度模型" },
+          "profile_url": { "type": "string", "description": "设备参数文件" },
+          "risk_score": { "type": ["number", "null"] },
+          "grade": { "type": ["string", "null"] },
+          "material": { "type": "string" },
+          "sizeText": { "type": "string" },
+          "optimize": { "type": "boolean" }
+        }
+      },
+      "_meta": {
+        "ui": {
+          "componentPath": "components/engrave-card/index",
+          "pagePath": "/pages/image25d/index"
+        }
+      }
+    },
+    {
+      "name": "generateTextTo25D",
+      "description": "文生2.5D：用一句话描述生成2D图并转换为2.5D内雕预览。当用户用文字描述想做的图案/摆件（如「生成一只星空下的小猫的2.5D摆件」「把这句话做成2.5D内雕」）时调用。prompt为文字描述（≤200字），style可选 crystal|portrait|product|logo。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "prompt": {
+            "type": "string",
+            "description": "文字描述，不超过200字"
+          },
+          "style": {
+            "type": "string",
+            "enum": ["crystal", "portrait", "product", "logo"],
+            "description": "风格，默认crystal"
+          }
+        },
+        "required": ["prompt"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "image_url": { "type": "string", "description": "生成的2D图" },
+          "depth_url": { "type": "string", "description": "深度图" },
+          "pod3d_url": { "type": "string", "description": "2.5D预览图" },
+          "prompt": { "type": "string" },
+          "style": { "type": "string" }
+        }
+      },
+      "_meta": {
+        "ui": {
+          "componentPath": "components/engrave-card/index",
+          "pagePath": "/pages/text25d/index"
+        }
+      }
+    },
+    {
+      "name": "makeAIStylePhoto",
+      "description": "AI拍照机风格大片：活动现场照片一键抠图换背景。当用户上传照片并说「换个夏日背景」「做国潮红/赛博蓝/暖金/纯净白风格大片」「活动照片换背景」等时调用。template可选 summer|red|blue|gold|white。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "imagePath": {
+            "type": "string",
+            "format": "image",
+            "description": "用户上传的照片本地路径（png/jpg，单张≤10M）"
+          },
+          "template": {
+            "type": "string",
+            "enum": ["summer", "red", "blue", "gold", "white"],
+            "description": "背景模板，默认summer"
+          }
+        },
+        "required": ["imagePath"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "styled_url": { "type": "string", "description": "风格化成品图" },
+          "photo_job_id": { "type": "integer", "description": "继续选择成品与询价的照片任务ID，不是设备订单号" },
+          "photo_job_status": { "type": "string" },
+          "production_status": { "type": "string" },
+          "is_generative_cartoon": { "type": "boolean", "description": "本次是否实际完成生成式卡通，false时不得声称卡通已完成" },
+          "generation_source": { "type": "string" },
+          "mode": { "type": "string", "enum": ["booth"], "description": "进入已有彩印拍照页面继续选择成品与确认预览" },
+          "template": { "type": "string" }
+        }
+      },
+      "_meta": {
+        "ui": {
+          "componentPath": "components/engrave-card/index",
+          "pagePath": "/pages/photobooth/index"
+        }
+      }
+    },
+    {
+      "name": "makeAICommemorativeCoin",
+      "description": "AI纪念币：人像照片生成圆形纪念币（环绕文字+金银材质），输出灰度图、BMP、STL加工包。当用户上传照片并说「做一枚纪念币」「顶部写XX底部写XX」「生成金币/银币」等时调用。material可选 gold|silver，sizeMm 40-80。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "imagePath": {
+            "type": "string",
+            "format": "image",
+            "description": "用户上传的照片本地路径（png/jpg，单张≤10M）"
+          },
+          "ringTextTop": {
+            "type": "string",
+            "description": "币面顶部环绕文字，默认清凉夏日"
+          },
+          "ringTextBottom": {
+            "type": "string",
+            "description": "币面底部环绕文字，默认31度科技·2026"
+          },
+          "material": {
+            "type": "string",
+            "enum": ["gold", "silver"],
+            "description": "材质，默认gold"
+          },
+          "sizeMm": {
+            "type": "number",
+            "minimum": 40,
+            "maximum": 80,
+            "description": "纪念币直径(mm)，默认60"
+          }
+        },
+        "required": ["imagePath"]
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "coin_url": { "type": "string", "description": "圆形币面预览图" },
+          "depth_url": { "type": "string", "description": "灰度深度图" },
+          "bmp_url": { "type": "string", "description": "8位灰度BMP" },
+          "stl_url": { "type": "string", "description": "STL高度模型" },
+          "profile_url": { "type": "string", "description": "设备参数文件" },
+          "coin_size_mm": { "type": "number" },
+          "material": { "type": "string" },
+          "ringTextTop": { "type": "string" },
+          "ringTextBottom": { "type": "string" }
+        }
+      },
+      "_meta": {
+        "ui": {
+          "componentPath": "components/coin-card/index",
+          "pagePath": "/pages/coin/index"
+        }
+      }
+    },
+    {
+      "name": "queryEngravingStatus",
+      "description": "查询当前账号的设备订单或文件处理任务。指定orderId时只查该设备订单；不传时返回最近记录。partial=true代表部分来源查询失败，不能推断没有订单。文件处理完成不代表实物加工完成。",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "orderId": {
+            "type": "string",
+            "description": "设备订单的正整数ID，可为空字符串；不是询价编号或文件处理任务ID"
+          }
+        }
+      },
+      "outputSchema": {
+        "type": "object",
+        "properties": {
+          "tasks": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": ["string", "number"] },
+                "type": { "type": "string" },
+                "status": { "type": "string" },
+                "created_at": { "type": "string" }
+              }
+            }
+          },
+          "partial": { "type": "boolean", "description": "是否仅部分来源查询成功" },
+          "unavailable_sources": { "type": "array", "items": { "type": "string" }, "description": "本次未能读取的来源" },
+          "orders": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": { "type": ["string", "number"] },
+                "status": { "type": "string" },
+                "created_at": { "type": "string" }
+              }
+            }
+          }
+        }
+      },
+      "_meta": {
+        "ui": {
+          "pagePath": "/pages/orders/index"
+        }
+      }
+    }
+  ],
+  "components": [
+    {
+      "path": "components/engrave-card/index",
+      "relatedPage": "/pages/image25d/index",
+      "expirable": true
+    },
+    {
+      "path": "components/coin-card/index",
+      "relatedPage": "/pages/coin/index",
+      "expirable": true
+    }
+  ]
+}

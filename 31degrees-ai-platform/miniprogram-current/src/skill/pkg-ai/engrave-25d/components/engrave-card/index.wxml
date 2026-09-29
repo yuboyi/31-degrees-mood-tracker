@@ -1,0 +1,25 @@
+<view class="card">
+  <view class="card-title">{{title}}</view>
+
+  <view class="preview-box">
+    <image
+      wx:if="{{previewUrl && !imgError}}"
+      class="preview-img"
+      src="{{previewUrl}}"
+      mode="aspectFit"
+      bindload="onImgLoad"
+      binderror="onImgError"
+    />
+    <view wx:else class="preview-placeholder">预览图生成中</view>
+  </view>
+
+  <view class="params">
+    <text wx:if="{{material}}" class="param">材料：{{material}}</text>
+    <text wx:if="{{sizeText}}" class="param">尺寸：{{sizeText}}</text>
+    <text wx:if="{{risk_score}}" class="param">风险分：{{risk_score}}</text>
+    <text wx:if="{{style}}" class="param">风格：{{style}}</text>
+    <text wx:if="{{template}}" class="param">模板：{{template}}</text>
+  </view>
+
+  <view class="btn" bindtap="onOpen">{{buttonText}}</view>
+</view>
